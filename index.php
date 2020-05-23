@@ -1,12 +1,11 @@
 <html>
 <head>
-
 </head>
 <body>
     
    <form action="" method="post">
    
-ID:<br>
+Enter Text:<br>
    <input type="text" name="id" value="" />
 <br><br>
 <input type="submit" name="submit" value="Submit" />
@@ -15,14 +14,46 @@ ID:<br>
     <?php
      if (isset($_POST['submit'])) {
          $id = $_POST['id'];
-         $a = "qrcode.php?s=qrl&d=";
-    }
+         
+     
 
+        
+        
+        function encrypt_decrypt($action, $string) {
+            $output = false;
+
+            $encrypt_method = "AES-256-CBC";
+            $secret_key = 'sadgjakgdkjafkj';
+            $secret_iv = 'This is my secret iv';
+
+            $key = hash('sha256', $secret_key);
+            
+            $iv = substr(hash('sha256', $secret_iv), 0, 16);
+
+            if ( $action == 'encrypt' ) {
+                $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+                $output = base64_encode($output);
+            } else if( $action == 'decrypt' ) {
+                $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+            }
+
+            return $output;
+        }
+
+        //$plain_txt = "Hello World!";
+        echo "Original Text =" .$id. "\n";
+        ?><br><br><?php
+            $encrypted_txt = encrypt_decrypt('encrypt', $id);
+            
+        echo "Encrypted Text = " .$encrypted_txt. "\n";
+            ?><br><br><?php
+                }
     ?>
-    
-
-<img src="<?php echo $a.$id;?>">
+    <a href= "home.php?id=<?php echo $encrypted_txt;?>"> Click Here </a>
 
 
 </body>
 </html>
+
+
+
